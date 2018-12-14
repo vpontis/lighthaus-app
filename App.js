@@ -1,11 +1,129 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback,
+  Text,
+  View,
+  Platform,
+  ScrollView,
+  SafeAreaView
+} from 'react-native';
+import tinycolor from 'tinycolor2';
+import {LinearGradient, Haptic} from 'expo';
+
+
+import {HueSlider, SaturationSlider} from 'react-native-color';
+
+const color_to_hsla_string = ({h, s, l, a}) => {
+
+  return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
+}
 
 export default class App extends React.Component {
-  render() {
+  state = {
+    modalVisible: false,
+    recents: ['#247ba0', '#70c1b3', '#b2dbbf', '#f3ffbd', '#ff1654'],
+    top_color: tinycolor('#70c1b3').toHsl(),
+    bottom_color: tinycolor('#70c1b3').toHsl(),
+  };
+
+  update_top_hue = h => this.setState({top_color: {...this.state.top_color, h}});
+  update_top_saturation = s => this.setState({top_color: {...this.state.top_color, s}});
+
+  update_bottom_hue = h => this.setState({bottom_color: {...this.state.bottom_color, h}});
+  update_bottom_saturation = s => this.setState({bottom_color: {...this.state.bottom_color, s}});
+
+  render () {
+    const {top_color, bottom_color} = this.state;
+    const top_color_hsla = color_to_hsla_string(top_color);
+    const bottom_color_hsla = color_to_hsla_string(bottom_color);
+
     return (
-      <View style={styles.container}>
-        <Text>Open up App.js to start working on your app!</Text>
+      <View
+        style={{
+          backgroundColor: '#000',
+          flexDirection: 'column',
+          alignItems: 'stretch',
+          justifyContent: 'space-between',
+          flex: 1,
+
+        }}
+      >
+        <View
+          style={{
+            justifyContent: 'flex-end',
+            backgroundColor: 'white',
+            justifyContent: 'center',
+            height: 150,
+            flexGrow: 1,
+          }}
+        >
+          <HueSlider
+            style={styles.sliderRow}
+            gradientSteps={40}
+            value={top_color.h}
+            onValueChange={this.update_top_hue}
+          />
+
+          <SaturationSlider
+            style={styles.sliderRow}
+            gradientSteps={20}
+            value={top_color.s}
+            color={top_color}
+            onValueChange={this.update_top_saturation}
+          />
+        </View>
+
+
+        <TouchableWithoutFeedback
+          onPress={() =>
+            Haptic.notification(Haptic.NotificationFeedbackType.Success)
+          }
+          style={{
+            backgroundColor: 'white',
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <LinearGradient
+              colors={[top_color_hsla, bottom_color_hsla]}
+              style={{
+                flexGrow: 1,
+                width: 50,
+                height: Dimensions.get('window').height - 280,
+              }}
+            />
+          </View>
+        </TouchableWithoutFeedback>
+
+        <View
+          style={{
+            flexGrow: 1,
+            backgroundColor: 'white',
+            height: 200,
+          }}
+        >
+          <SaturationSlider
+            style={styles.sliderRow}
+            gradientSteps={20}
+            value={bottom_color.s}
+            color={bottom_color}
+            onValueChange={this.update_bottom_saturation}
+          />
+
+          <HueSlider
+            style={styles.sliderRow}
+            gradientSteps={40}
+            value={bottom_color.h}
+            onValueChange={this.update_bottom_hue}
+          />
+        </View>
       </View>
     );
   }
@@ -13,9 +131,24 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1
+  },
+  content: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    paddingHorizontal: 32,
+    paddingBottom: 32
+  },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 6,
+  },
+  sliderRow: {
+    alignSelf: 'stretch',
+    marginLeft: 12,
+    marginTop: 12
   },
 });
+
