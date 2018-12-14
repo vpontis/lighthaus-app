@@ -42,7 +42,7 @@ export default class App extends React.Component {
     return (
       <View
         style={{
-          backgroundColor: '#000',
+          backgroundColor: 'white',
           flexDirection: 'column',
           alignItems: 'stretch',
           justifyContent: 'space-between',
@@ -54,9 +54,9 @@ export default class App extends React.Component {
           style={{
             justifyContent: 'flex-end',
             backgroundColor: 'white',
-            justifyContent: 'center',
             height: 150,
             flexGrow: 1,
+            marginBottom: 10,
           }}
         >
           <HueSlider
@@ -77,7 +77,7 @@ export default class App extends React.Component {
 
 
         <TouchableWithoutFeedback
-          onPress={() =>
+          onLongPress={() =>
             Haptic.notification(Haptic.NotificationFeedbackType.Success)
           }
           style={{
@@ -86,6 +86,7 @@ export default class App extends React.Component {
         >
           <View
             style={{
+              width: Dimensions.get('window').width,
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
@@ -94,9 +95,11 @@ export default class App extends React.Component {
             <LinearGradient
               colors={[top_color_hsla, bottom_color_hsla]}
               style={{
-                flexGrow: 1,
-                width: 50,
-                height: Dimensions.get('window').height - 280,
+                width: 126,
+                backgroundColor: 'red',
+                borderRadius: 95,
+
+                height: Dimensions.get('window').height - 300,
               }}
             />
           </View>
@@ -107,6 +110,7 @@ export default class App extends React.Component {
             flexGrow: 1,
             backgroundColor: 'white',
             height: 200,
+            justifyContent: 'flex-start',
           }}
         >
           <SaturationSlider
