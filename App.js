@@ -11,21 +11,21 @@ import {
 } from 'react-native';
 import tinycolor from 'tinycolor2';
 import {LinearGradient, Haptic} from 'expo';
+import axios from 'axios';
 
 
 import {HueSlider, SaturationSlider} from 'react-native-color';
 
 const color_to_hsla_string = ({h, s, l, a}) => {
-
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 }
 
+const INITIAL_TOP_COLOR = {}
+
 export default class App extends React.Component {
   state = {
-    modalVisible: false,
-    recents: ['#247ba0', '#70c1b3', '#b2dbbf', '#f3ffbd', '#ff1654'],
-    top_color: tinycolor('#70c1b3').toHsl(),
-    bottom_color: tinycolor('#70c1b3').toHsl(),
+    top_color: tinycolor('#00AAFF').toHsl(),
+    bottom_color: tinycolor('#55FF00').toHsl(),
   };
 
   update_top_hue = h => this.setState({top_color: {...this.state.top_color, h}});
@@ -33,6 +33,26 @@ export default class App extends React.Component {
 
   update_bottom_hue = h => this.setState({bottom_color: {...this.state.bottom_color, h}});
   update_bottom_saturation = s => this.setState({bottom_color: {...this.state.bottom_color, s}});
+
+  update_color = async () => {
+    const {top_color, bottom_color} = this.state;
+    const top_rgb = tinycolor.fromRatio(top_color).toRgb();
+    const bottom_rgb = tinycolor.fromRatio(bottom_color).toRgb();
+
+    Haptic.notification(Haptic.NotificationFeedbackType.Success)
+    const scrollspeed = 1000;
+
+    const payload = {
+      color: [bottom_rgb, top_rgb],
+      scrollspeed,
+    }
+    
+    try {
+      const {data} = await axios.post('http://192.168.1.45:5000/', payload)
+    } catch (e) {
+      console.log(e)
+    }
+  }
 
   render () {
     const {top_color, bottom_color} = this.state;
@@ -66,20 +86,11 @@ export default class App extends React.Component {
             onValueChange={this.update_top_hue}
           />
 
-          <SaturationSlider
-            style={styles.sliderRow}
-            gradientSteps={20}
-            value={top_color.s}
-            color={top_color}
-            onValueChange={this.update_top_saturation}
-          />
         </View>
 
 
         <TouchableWithoutFeedback
-          onLongPress={() =>
-            Haptic.notification(Haptic.NotificationFeedbackType.Success)
-          }
+          onLongPress={this.update_color}
           style={{
             backgroundColor: 'white',
           }}
@@ -113,13 +124,6 @@ export default class App extends React.Component {
             justifyContent: 'flex-start',
           }}
         >
-          <SaturationSlider
-            style={styles.sliderRow}
-            gradientSteps={20}
-            value={bottom_color.s}
-            color={bottom_color}
-            onValueChange={this.update_bottom_saturation}
-          />
 
           <HueSlider
             style={styles.sliderRow}
