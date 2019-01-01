@@ -3,12 +3,9 @@ import {
   StyleSheet,
   Dimensions,
   TouchableWithoutFeedback,
-  Text,
   View,
-  Platform,
-  ScrollView,
-  SafeAreaView
 } from 'react-native';
+import {Icon} from 'react-native-elements';
 import tinycolor from 'tinycolor2';
 import {LinearGradient, Haptic} from 'expo';
 import axios from 'axios';
@@ -34,19 +31,18 @@ export default class App extends React.Component {
   update_bottom_hue = h => this.setState({bottom_color: {...this.state.bottom_color, h}});
   update_bottom_saturation = s => this.setState({bottom_color: {...this.state.bottom_color, s}});
 
-  update_color = async () => {
+  update_color = async (scroll_speed = 0.05) => {
     const {top_color, bottom_color} = this.state;
     const top_rgb = tinycolor.fromRatio(top_color).toRgb();
     const bottom_rgb = tinycolor.fromRatio(bottom_color).toRgb();
 
     Haptic.notification(Haptic.NotificationFeedbackType.Success)
-    const scrollspeed = 1000;
 
     const payload = {
       color: [bottom_rgb, top_rgb],
-      scrollspeed,
+      scroll_speed,
     }
-    
+
     try {
       const {data} = await axios.post('http://192.168.1.45:5000/', payload)
     } catch (e) {
@@ -67,15 +63,13 @@ export default class App extends React.Component {
           alignItems: 'stretch',
           justifyContent: 'space-between',
           flex: 1,
-
         }}
       >
         <View
           style={{
             justifyContent: 'flex-end',
             backgroundColor: 'white',
-            height: 150,
-            flexGrow: 1,
+            height: 80,
             marginBottom: 10,
           }}
         >
@@ -118,21 +112,51 @@ export default class App extends React.Component {
 
         <View
           style={{
-            flexGrow: 1,
             backgroundColor: 'white',
-            height: 200,
+            height: 150,
             justifyContent: 'flex-start',
           }}
         >
-
           <HueSlider
             style={styles.sliderRow}
             gradientSteps={40}
             value={bottom_color.h}
             onValueChange={this.update_bottom_hue}
           />
+
+          <View
+            style={{
+              marginTop: 40,
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'flex-start',
+            }}
+          >
+            <Icon
+              name='stop'
+              type='font-awesome'
+              size={18}
+              color="black"
+              onPress={() => this.update_color(0.0)}
+            />
+            <Icon
+              name='play'
+              type='font-awesome'
+              size={18}
+              color="black"
+              onPress={() => this.update_color(0.02)}
+            />
+            <Icon
+              name='fast-forward'
+              type='font-awesome'
+              size={18}
+              color="black"
+              onPress={() => this.update_color(0.1)}
+            />
+          </View>
         </View>
-      </View>
+        </View>
+
     );
   }
 }
