@@ -83,32 +83,25 @@ export default class App extends React.Component {
         </View>
 
 
-        <TouchableWithoutFeedback
-          onLongPress={this.update_color}
+        <View
           style={{
-            backgroundColor: 'white',
+            width: Dimensions.get('window').width,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
         >
-          <View
+          <LinearGradient
+            colors={[top_color_hsla, bottom_color_hsla]}
             style={{
-              width: Dimensions.get('window').width,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <LinearGradient
-              colors={[top_color_hsla, bottom_color_hsla]}
-              style={{
-                width: 126,
-                backgroundColor: 'red',
-                borderRadius: 95,
+              width: 126,
+              backgroundColor: 'red',
+              borderRadius: 95,
 
-                height: Dimensions.get('window').height - 300,
-              }}
-            />
-          </View>
-        </TouchableWithoutFeedback>
+              height: Dimensions.get('window').height - 300,
+            }}
+          />
+        </View>
 
         <View
           style={{
@@ -135,27 +128,30 @@ export default class App extends React.Component {
             <Icon
               name='stop'
               type='font-awesome'
-              size={18}
+              size={26}
               color="black"
               onPress={() => this.update_color(0.0)}
+              onLongPress={() => this.update_color(0.0)}
             />
             <Icon
               name='play'
               type='font-awesome'
-              size={18}
+              size={26}
               color="black"
               onPress={() => this.update_color(0.02)}
+              onLongPress={() => this.update_color(0.02)}
             />
             <Icon
               name='fast-forward'
               type='font-awesome'
-              size={18}
+              size={26}
               color="black"
-              onPress={() => this.update_color(0.1)}
+              onPress={() => this.update_color(0.05)}
+              onLongPress={() => this.update_color(0.05)}
             />
           </View>
         </View>
-        </View>
+      </View>
 
     );
   }
