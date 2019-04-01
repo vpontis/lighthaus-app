@@ -7,3 +7,13 @@ npm-debug.*
 *.mobileprovision
 .idea/
 .DS_Store
+
+ios/Pods/**/*
+ios/scooter-map.xcworkspace/xcuserdata/victor.xcuserdatad/UserInterfaceState.xcuserstate
+
+android/build/
+android/.gradle/**/*
+android/app/build/**/*
+android/**/*.iml
+android/local.properties
+android/prod-build/

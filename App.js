@@ -2,7 +2,6 @@ import React from 'react';
 import {
   StyleSheet,
   Dimensions,
-  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
@@ -11,13 +10,11 @@ import {LinearGradient, Haptic} from 'expo';
 import axios from 'axios';
 
 
-import {HueSlider, SaturationSlider} from 'react-native-color';
+import {HueSlider} from 'react-native-color';
 
 const color_to_hsla_string = ({h, s, l, a}) => {
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 }
-
-const INITIAL_TOP_COLOR = {}
 
 export default class App extends React.Component {
   state = {
@@ -45,6 +42,7 @@ export default class App extends React.Component {
 
     try {
       const {data} = await axios.post('http://192.168.1.45:5000/', payload)
+      console.log(data)
     } catch (e) {
       console.log(e)
     }
@@ -138,16 +136,16 @@ export default class App extends React.Component {
               type='font-awesome'
               size={26}
               color="black"
-              onPress={() => this.update_color(0.02)}
-              onLongPress={() => this.update_color(0.02)}
+              onPress={() => this.update_color(0.015)}
+              onLongPress={() => this.update_color(0.015)}
             />
             <Icon
               name='fast-forward'
               type='font-awesome'
               size={26}
               color="black"
-              onPress={() => this.update_color(0.05)}
-              onLongPress={() => this.update_color(0.05)}
+              onPress={() => this.update_color(0.04)}
+              onLongPress={() => this.update_color(0.04)}
             />
           </View>
         </View>

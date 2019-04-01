@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "lighthouse",
+    "name": "lighthaus",
     "description": "Lighthouse allows you to see colors and send them to our light installation.",
-    "slug": "lighthouse",
+    "slug": "lighthaus",
     "privacy": "public",
     "sdkVersion": "31.0.0",
     "platforms": [
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/lighthouse.png",
     "splash": {
@@ -24,9 +24,22 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.opolislabs.lighthouse",
-      "supportsTablet": true
+      "buildNumber": "1.0.1",
+      "bundleIdentifier": "com.opolislabs.lighthaus",
+      "supportsTablet": true,
+      "publishBundlePath": "ios/lighthaus/Supporting/shell-app.bundle",
+      "publishManifestPath": "ios/lighthaus/Supporting/shell-app-manifest.json"
+    },
+    "isDetached": true,
+    "detach": {
+      "iosExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/ios-v2.9.0-sdk31.0.0-250a3991-b623-4f9c-b07f-0b9ed7e8c4c9.tar.gz",
+      "androidExpoViewUrl": "https://s3.amazonaws.com/exp-exponent-view-code/android-v2.9.2-sdk31.0.0-d1776f37-d524-4fee-872d-6807b0fd83ff.tar.gz"
+    },
+    "scheme": "expbd78b4849c5b43ebb5458553eff1f320",
+    "android": {
+      "package": "com.opolislabs.lighthaus",
+      "publishBundlePath": "android/app/src/main/assets/shell-app.bundle",
+      "publishManifestPath": "android/app/src/main/assets/shell-app-manifest.json"
     }
   }
 }
