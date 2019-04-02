@@ -41,7 +41,7 @@ export default class App extends React.Component {
     }
 
     try {
-      const {data} = await axios.post('http://192.168.1.45:5000/', payload)
+      const {data} = await axios.post('http://192.168.1.9:5000/', payload)
       console.log(data)
     } catch (e) {
       console.log(e)
