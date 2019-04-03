@@ -3,6 +3,7 @@ import {
   StyleSheet,
   Dimensions,
   View,
+  Button,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import tinycolor from 'tinycolor2';
@@ -39,12 +40,13 @@ export default class App extends React.Component {
       color: [bottom_rgb, top_rgb],
       scroll_speed,
     }
+    console.log('sending thing...')
 
     try {
       const {data} = await axios.post('http://192.168.1.9:5000/', payload)
-      console.log(data)
+      console.log('resp', data, payload)
     } catch (e) {
-      console.log(e)
+      console.log('error', e)
     }
   }
 
