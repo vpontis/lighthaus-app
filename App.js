@@ -17,6 +17,10 @@ const color_to_hsla_string = ({h, s, l, a}) => {
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 }
 
+const LIGHTHAUS_ADDRESS = 'http://192.168.1.39:5000/';
+const PLAY_SPEED = 0.004;
+const FASTFORWARD_SPEED = 0.015;
+
 export default class App extends React.Component {
   state = {
     top_color: tinycolor('#00AAFF').toHsl(),
@@ -43,7 +47,7 @@ export default class App extends React.Component {
     console.log('sending thing...')
 
     try {
-      const {data} = await axios.post('http://192.168.1.9:5000/', payload)
+      const {data} = await axios.post(LIGHTHAUS_ADDRESS, payload)
       console.log('resp', data, payload)
     } catch (e) {
       console.log('error', e)
@@ -138,16 +142,16 @@ export default class App extends React.Component {
               type='font-awesome'
               size={26}
               color="black"
-              onPress={() => this.update_color(0.015)}
-              onLongPress={() => this.update_color(0.015)}
+              onPress={() => this.update_color(PLAY_SPEED)}
+              onLongPress={() => this.update_color(PLAY_SPEED)}
             />
             <Icon
               name='fast-forward'
               type='font-awesome'
               size={26}
               color="black"
-              onPress={() => this.update_color(0.04)}
-              onLongPress={() => this.update_color(0.04)}
+              onPress={() => this.update_color(FASTFORWARD_SPEED)}
+              onLongPress={() => this.update_color(FASTFORWARD_SPEED)}
             />
           </View>
         </View>
