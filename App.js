@@ -17,7 +17,7 @@ const color_to_hsla_string = ({h, s, l, a}) => {
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 }
 
-const LIGHTHAUS_ADDRESS = 'http://192.168.1.39:5000/';
+const LIGHTHAUS_ADDRESS = 'http://192.168.1.5:5000/';
 const PLAY_SPEED = 0.004;
 const FASTFORWARD_SPEED = 0.015;
 
