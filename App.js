@@ -4,6 +4,7 @@ import {
   Dimensions,
   View,
   Button,
+  Text,
 } from 'react-native';
 import {Icon} from 'react-native-elements';
 import tinycolor from 'tinycolor2';
@@ -129,6 +130,10 @@ export default class App extends React.Component {
               alignItems: 'flex-start',
             }}
           >
+            {/*<Text onPress={() => this.update_color(0.0)}>*/}
+            {/*  Send*/}
+            {/*</Text>*/}
+
             <Icon
               name='stop'
               type='font-awesome'
