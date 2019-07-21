@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Dimensions, View } from "react-native";
+import React, {useState} from "react";
+import {StyleSheet, Dimensions, View, ActivityIndicator} from "react-native";
 import { Icon } from "react-native-elements";
 import tinycolor from "tinycolor2";
 import * as Haptic from "expo-haptics";
@@ -16,24 +16,92 @@ const LIGHTHAUS_ADDRESS = "http://192.168.1.5:5000/";
 const PLAY_SPEED = 0.004;
 const FASTFORWARD_SPEED = 0.015;
 
-export default class App extends React.Component {
-  state = {
-    top_color: tinycolor("#00AAFF").toHsl(),
-    bottom_color: tinycolor("#55FF00").toHsl()
-  };
+const LighthausPreview = ({top_color_hsla, bottom_color_hsla}) => (
+    <View
+        style={{
+            width: Dimensions.get("window").width,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center"
+        }}
+    >
+        <LinearGradient
+            colors={[top_color_hsla, bottom_color_hsla]}
+            style={{
+                width: 126,
+                backgroundColor: "red",
+                borderRadius: 60,
 
-  update_top_hue = h =>
-    this.setState({ top_color: { ...this.state.top_color, h } });
-  update_top_saturation = s =>
-    this.setState({ top_color: { ...this.state.top_color, s } });
+                height: Dimensions.get("window").height - 300
+            }}
+        />
+    </View>
+)
 
-  update_bottom_hue = h =>
-    this.setState({ bottom_color: { ...this.state.bottom_color, h } });
-  update_bottom_saturation = s =>
-    this.setState({ bottom_color: { ...this.state.bottom_color, s } });
+const ControlBar = ({update_color, is_loading}) => {
+    if (is_loading) {
+        return (
+            <View
+                style={{
+                    marginTop: 40,
+                    flexDirection: "row",
+                    justifyContent: "space-around",
+                    alignItems: "flex-start"
+                }}
+            >
+                <ActivityIndicator />
+            </View>
+        )
+    }
 
-  update_color = async (scroll_speed = 0.05) => {
-    const { top_color, bottom_color } = this.state;
+    return (
+        <View
+            style={{
+                marginTop: 40,
+                flexDirection: "row",
+                justifyContent: "space-around",
+                alignItems: "flex-start"
+            }}
+        >
+            <Icon
+                name="stop"
+                type="font-awesome"
+                size={26}
+                color="black"
+                onPress={() => update_color(0.0)}
+                onLongPress={() => update_color(0.0)}
+            />
+            <Icon
+                name="play"
+                type="font-awesome"
+                size={26}
+                color="black"
+                onPress={() => update_color(PLAY_SPEED)}
+                onLongPress={() => update_color(PLAY_SPEED)}
+            />
+            <Icon
+                name="fast-forward"
+                type="font-awesome"
+                size={26}
+                color="black"
+                onPress={() => update_color(FASTFORWARD_SPEED)}
+                onLongPress={() => update_color(FASTFORWARD_SPEED)}
+            />
+        </View>
+    )
+}
+
+const App = () => {
+  const [top_color, set_top_color] = useState(tinycolor("#00AAFF").toHsl())
+  const [bottom_color, set_bottom_color] = useState(tinycolor("#55FF00").toHsl())
+  const [is_loading, set_is_loading] = useState(false);
+
+  const update_top_hue = h => set_top_color({ ...top_color, h } );
+  const update_bottom_hue = h => set_bottom_color({ ...bottom_color, h });
+
+  const update_color = async (scroll_speed = 0.05) => {
+    set_is_loading(true);
+
     const top_rgb = tinycolor.fromRatio(top_color).toRgb();
     const bottom_rgb = tinycolor.fromRatio(bottom_color).toRgb();
 
@@ -48,117 +116,64 @@ export default class App extends React.Component {
       console.log("resp", data, payload);
       await Haptic.notificationAsync(Haptic.NotificationFeedbackType.Success);
     } catch (e) {
-      console.log("error", e);
+      console.error("error", e);
     }
+
+    set_is_loading(false);
   };
 
-  render() {
-    const { top_color, bottom_color } = this.state;
-    const top_color_hsla = color_to_hsla_string(top_color);
-    const bottom_color_hsla = color_to_hsla_string(bottom_color);
+  const top_color_hsla = color_to_hsla_string(top_color);
+  const bottom_color_hsla = color_to_hsla_string(bottom_color);
 
-    return (
+  return (
+    <View
+      style={{
+        backgroundColor: "white",
+        flexDirection: "column",
+        alignItems: "stretch",
+        justifyContent: "space-between",
+        flex: 1
+      }}
+    >
+      <View
+        style={{
+          justifyContent: "flex-end",
+          backgroundColor: "white",
+          height: 80,
+          marginBottom: 10
+        }}
+      >
+        <HueSlider
+          style={styles.sliderRow}
+          gradientSteps={40}
+          value={top_color.h}
+          onValueChange={update_top_hue}
+        />
+      </View>
+
+      <LighthausPreview top_color_hsla={top_color_hsla} bottom_color_hsla={bottom_color_hsla}/>
+
       <View
         style={{
           backgroundColor: "white",
-          flexDirection: "column",
-          alignItems: "stretch",
-          justifyContent: "space-between",
-          flex: 1
+          height: 150,
+          justifyContent: "flex-start"
         }}
       >
-        <View
-          style={{
-            justifyContent: "flex-end",
-            backgroundColor: "white",
-            height: 80,
-            marginBottom: 10
-          }}
-        >
-          <HueSlider
-            style={styles.sliderRow}
-            gradientSteps={40}
-            value={top_color.h}
-            onValueChange={this.update_top_hue}
-          />
-        </View>
+        <HueSlider
+          style={styles.sliderRow}
+          gradientSteps={40}
+          value={bottom_color.h}
+          onValueChange={update_bottom_hue}
+        />
 
-        <View
-          style={{
-            width: Dimensions.get("window").width,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
-          }}
-        >
-          <LinearGradient
-            colors={[top_color_hsla, bottom_color_hsla]}
-            style={{
-              width: 126,
-              backgroundColor: "red",
-              borderRadius: 60,
-
-              height: Dimensions.get("window").height - 300
-            }}
-          />
-        </View>
-
-        <View
-          style={{
-            backgroundColor: "white",
-            height: 150,
-            justifyContent: "flex-start"
-          }}
-        >
-          <HueSlider
-            style={styles.sliderRow}
-            gradientSteps={40}
-            value={bottom_color.h}
-            onValueChange={this.update_bottom_hue}
-          />
-
-          <View
-            style={{
-              marginTop: 40,
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignItems: "flex-start"
-            }}
-          >
-            {/*<Text onPress={() => this.update_color(0.0)}>*/}
-            {/*  Send*/}
-            {/*</Text>*/}
-
-            <Icon
-              name="stop"
-              type="font-awesome"
-              size={26}
-              color="black"
-              onPress={() => this.update_color(0.0)}
-              onLongPress={() => this.update_color(0.0)}
-            />
-            <Icon
-              name="play"
-              type="font-awesome"
-              size={26}
-              color="black"
-              onPress={() => this.update_color(PLAY_SPEED)}
-              onLongPress={() => this.update_color(PLAY_SPEED)}
-            />
-            <Icon
-              name="fast-forward"
-              type="font-awesome"
-              size={26}
-              color="black"
-              onPress={() => this.update_color(FASTFORWARD_SPEED)}
-              onLongPress={() => this.update_color(FASTFORWARD_SPEED)}
-            />
-          </View>
-        </View>
+        <ControlBar update_color={update_color} is_loading={is_loading}/>
       </View>
-    );
-  }
+    </View>
+  )
 }
+
+export default App;
 
 const styles = StyleSheet.create({
   container: {
