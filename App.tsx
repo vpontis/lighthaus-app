@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Dimensions, View, ActivityIndicator } from "react-native";
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  ActivityIndicator,
+  AsyncStorage,
+  Platform,
+  AlertIOS
+} from "react-native";
 import { Icon } from "react-native-elements";
 import tinycolor from "tinycolor2";
 import * as Haptic from "expo-haptics";
@@ -12,8 +20,13 @@ const color_to_hsla_string = ({ h, s, l, a }) => {
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 };
 
-const IP_ADDRESS = "192.168.1.6";
-const LIGHTHAUS_ADDRESS = `http://${IP_ADDRESS}:5000/`;
+const IP_ADDRESS_ASYNC_STORAGE_KEY = "ip-address";
+
+const getIpAddress = async () => {
+  const storedIp = await AsyncStorage.getItem(IP_ADDRESS_ASYNC_STORAGE_KEY);
+  return storedIp || "192.168.1.6";
+};
+
 const PLAY_SPEED = 0.004;
 const FASTFORWARD_SPEED = 0.015;
 
@@ -38,6 +51,32 @@ const LighthausPreview = ({ top_color_hsla, bottom_color_hsla }) => (
     />
   </View>
 );
+
+const SettingsSection = () => {
+  const platform = Platform.OS;
+  if (platform !== "ios") {
+    return null;
+  }
+
+  return (
+    <Icon
+      name="gear"
+      type="font-awesome"
+      size={26}
+      color="black"
+      onPress={async () => {
+        const ipAddress = await getIpAddress();
+        AlertIOS.prompt("IP Address", `Current value ${ipAddress}`, newIp => {
+          if (!newIp) {
+            return;
+          }
+
+          AsyncStorage.setItem(IP_ADDRESS_ASYNC_STORAGE_KEY, newIp);
+        });
+      }}
+    />
+  );
+};
 
 const ControlBar = ({ update_color, is_loading }) => {
   if (is_loading) {
@@ -88,6 +127,8 @@ const ControlBar = ({ update_color, is_loading }) => {
         onPress={() => update_color(FASTFORWARD_SPEED)}
         onLongPress={() => update_color(FASTFORWARD_SPEED)}
       />
+
+      <SettingsSection />
     </View>
   );
 };
@@ -114,8 +155,11 @@ const App = () => {
     };
     console.log("sending thing...", payload);
 
+    const ipAddress = await getIpAddress();
+    const lighthausUrl = `http://${ipAddress}:5000/`;
+
     try {
-      const { data } = await axios.post(LIGHTHAUS_ADDRESS, payload);
+      const { data } = await axios.post(lighthausUrl, payload);
       console.log("resp", data, payload);
       await Haptic.notificationAsync(Haptic.NotificationFeedbackType.Success);
     } catch (e) {
