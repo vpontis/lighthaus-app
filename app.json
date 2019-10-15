@@ -3,9 +3,9 @@
     "name": "Lighthaus",
     "slug": "lighthausapp",
     "privacy": "public",
-    "sdkVersion": "34.0.0",
+    "sdkVersion": "35.0.0",
     "platforms": ["ios", "android", "web"],
-    "version": "2.0.0",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/lighthouse.png",
     "splash": {
