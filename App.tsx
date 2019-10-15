@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {StyleSheet, Dimensions, View, ActivityIndicator} from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Dimensions, View, ActivityIndicator } from "react-native";
 import { Icon } from "react-native-elements";
 import tinycolor from "tinycolor2";
 import * as Haptic from "expo-haptics";
@@ -12,91 +12,94 @@ const color_to_hsla_string = ({ h, s, l, a }) => {
   return `hsla(${h}, ${s * 100}%, ${l * 100}%, ${a})`;
 };
 
-const LIGHTHAUS_ADDRESS = "http://192.168.1.5:5000/";
+const IP_ADDRESS = "192.168.1.6";
+const LIGHTHAUS_ADDRESS = `http://${IP_ADDRESS}:5000/`;
 const PLAY_SPEED = 0.004;
 const FASTFORWARD_SPEED = 0.015;
 
-const LighthausPreview = ({top_color_hsla, bottom_color_hsla}) => (
-    <View
-        style={{
-            width: Dimensions.get("window").width,
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center"
-        }}
-    >
-        <LinearGradient
-            colors={[top_color_hsla, bottom_color_hsla]}
-            style={{
-                width: 126,
-                backgroundColor: "red",
-                borderRadius: 60,
+const LighthausPreview = ({ top_color_hsla, bottom_color_hsla }) => (
+  <View
+    style={{
+      width: Dimensions.get("window").width,
+      flexDirection: "row",
+      justifyContent: "center",
+      alignItems: "center"
+    }}
+  >
+    <LinearGradient
+      colors={[top_color_hsla, bottom_color_hsla]}
+      style={{
+        width: 126,
+        backgroundColor: "red",
+        borderRadius: 60,
 
-                height: Dimensions.get("window").height - 300
-            }}
-        />
-    </View>
-)
+        height: Dimensions.get("window").height - 300
+      }}
+    />
+  </View>
+);
 
-const ControlBar = ({update_color, is_loading}) => {
-    if (is_loading) {
-        return (
-            <View
-                style={{
-                    marginTop: 40,
-                    flexDirection: "row",
-                    justifyContent: "space-around",
-                    alignItems: "flex-start"
-                }}
-            >
-                <ActivityIndicator />
-            </View>
-        )
-    }
-
+const ControlBar = ({ update_color, is_loading }) => {
+  if (is_loading) {
     return (
-        <View
-            style={{
-                marginTop: 40,
-                flexDirection: "row",
-                justifyContent: "space-around",
-                alignItems: "flex-start"
-            }}
-        >
-            <Icon
-                name="stop"
-                type="font-awesome"
-                size={26}
-                color="black"
-                onPress={() => update_color(0.0)}
-                onLongPress={() => update_color(0.0)}
-            />
-            <Icon
-                name="play"
-                type="font-awesome"
-                size={26}
-                color="black"
-                onPress={() => update_color(PLAY_SPEED)}
-                onLongPress={() => update_color(PLAY_SPEED)}
-            />
-            <Icon
-                name="fast-forward"
-                type="font-awesome"
-                size={26}
-                color="black"
-                onPress={() => update_color(FASTFORWARD_SPEED)}
-                onLongPress={() => update_color(FASTFORWARD_SPEED)}
-            />
-        </View>
-    )
-}
+      <View
+        style={{
+          marginTop: 40,
+          flexDirection: "row",
+          justifyContent: "space-around",
+          alignItems: "flex-start"
+        }}
+      >
+        <ActivityIndicator />
+      </View>
+    );
+  }
+
+  return (
+    <View
+      style={{
+        marginTop: 40,
+        flexDirection: "row",
+        justifyContent: "space-around",
+        alignItems: "flex-start"
+      }}
+    >
+      <Icon
+        name="stop"
+        type="font-awesome"
+        size={26}
+        color="black"
+        onPress={() => update_color(0.0)}
+        onLongPress={() => update_color(0.0)}
+      />
+      <Icon
+        name="play"
+        type="font-awesome"
+        size={26}
+        color="black"
+        onPress={() => update_color(PLAY_SPEED)}
+        onLongPress={() => update_color(PLAY_SPEED)}
+      />
+      <Icon
+        name="fast-forward"
+        type="font-awesome"
+        size={26}
+        color="black"
+        onPress={() => update_color(FASTFORWARD_SPEED)}
+        onLongPress={() => update_color(FASTFORWARD_SPEED)}
+      />
+    </View>
+  );
+};
 
 const App = () => {
-  const [top_color, set_top_color] = useState(tinycolor("#00AAFF").toHsl())
-  const [bottom_color, set_bottom_color] = useState(tinycolor("#55FF00").toHsl())
+  const [top_color, set_top_color] = useState(tinycolor("#00AAFF").toHsl());
+  const [bottom_color, set_bottom_color] = useState(
+    tinycolor("#55FF00").toHsl()
+  );
   const [is_loading, set_is_loading] = useState(false);
 
-  const update_top_hue = h => set_top_color({ ...top_color, h } );
+  const update_top_hue = h => set_top_color({ ...top_color, h });
   const update_bottom_hue = h => set_bottom_color({ ...bottom_color, h });
 
   const update_color = async (scroll_speed = 0.05) => {
@@ -109,7 +112,7 @@ const App = () => {
       color: [bottom_rgb, top_rgb],
       scroll_speed
     };
-    console.log("sending thing...");
+    console.log("sending thing...", payload);
 
     try {
       const { data } = await axios.post(LIGHTHAUS_ADDRESS, payload);
@@ -151,7 +154,10 @@ const App = () => {
         />
       </View>
 
-      <LighthausPreview top_color_hsla={top_color_hsla} bottom_color_hsla={bottom_color_hsla}/>
+      <LighthausPreview
+        top_color_hsla={top_color_hsla}
+        bottom_color_hsla={bottom_color_hsla}
+      />
 
       <View
         style={{
@@ -167,11 +173,11 @@ const App = () => {
           onValueChange={update_bottom_hue}
         />
 
-        <ControlBar update_color={update_color} is_loading={is_loading}/>
+        <ControlBar update_color={update_color} is_loading={is_loading} />
       </View>
     </View>
-  )
-}
+  );
+};
 
 export default App;
 
